@@ -1,0 +1,4 @@
+tiboot3.bin
+dist/
+*.egg-info/
+*.pyc

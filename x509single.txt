@@ -1,0 +1,118 @@
+
+ [ req ]
+ distinguished_name = req_distinguished_name
+ x509_extensions = v3_ca
+ prompt = no
+
+ dirstring_type = nobmp
+ 
+ [ req_distinguished_name ]
+ C = oR
+ ST = rx
+ L = gQE843yQV0sag
+ O = dqhGYAQ2Y4gFfCq0t1yABCYxex9eAxt71f
+ OU = a87RB35W
+ CN = x0FSqGTPWbGpuiV
+ emailAddress = kFp5uGcgWXxcfxi@vsHs9C9qQWGrBs.com
+
+ [ v3_ca ]
+
+  basicConstraints = CA:true
+  1.3.6.1.4.1.294.1.3=ASN1:SEQUENCE:swrv
+  1.3.6.1.4.1.294.1.9=ASN1:SEQUENCE:ext_boot_info
+  1.3.6.1.4.1.294.1.10=ASN1:SEQUENCE:ext_enc_info
+  1.3.6.1.4.1.294.1.6=ASN1:SEQUENCE:firewall
+  1.3.6.1.4.1.294.1.7=ASN1:SEQUENCE:pll
+  1.3.6.1.4.1.294.1.8=ASN1:SEQUENCE:debug
+
+
+ [ ext_boot_info ]
+ extImgSize = INTEGER:330752
+ numComp = INTEGER:4
+ sbl=SEQUENCE:comp1
+ fw=SEQUENCE:comp2
+ bd1=SEQUENCE:comp3
+ bd2=SEQUENCE:comp4
+
+ [ comp1 ]
+
+ compType = INTEGER:170
+ bootCore = INTEGER:16
+ compOpts = INTEGER:1111
+ destAddr = FORMAT:HEX,OCT:41c00000
+ compSize = INTEGER:65536
+ shaType  = OID:2.16.840.1.101.3.4.2.3
+ shaValue = FORMAT:HEX,OCT:a29027e032432ebc64c9bc4caa5f939ca8e7bfe6b22d3f603bd83af4e89212e8ab4c210c24f25bdae145fc293ce37e5a966706e16ac11346c8bc342f4c74e244
+
+ [ comp2 ]
+
+ compType = INTEGER:187
+ bootCore = INTEGER:32
+ compOpts = INTEGER:2222
+ destAddr = FORMAT:HEX,OCT:00040000
+ compSize = INTEGER:262144
+ shaType  = OID:2.16.840.1.101.3.4.2.2
+ shaValue = FORMAT:HEX,OCT:b29027e032432ebc64c9bc4caa5f939ca8e7bfe6b22d3f603bd83af4e89212e8ab4c210c24f25bdae145fc293ce37e5a966706e16ac11346c8bc342f4c74e245
+
+
+ [ comp3 ]
+
+ compType = INTEGER:204
+ bootCore = INTEGER:48
+ compOpts = INTEGER:3333
+ destAddr = FORMAT:HEX,OCT:41c80000
+ compSize = INTEGER:2048
+ shaType  = OID:2.16.840.1.101.3.4.2.1
+ shaValue = FORMAT:HEX,OCT:c29027e032432ebc64c9bc4caa5f939ca8e7bfe6b22d3f603bd83af4e89212e8ab4c210c24f25bdae145fc293ce37e5a966706e16ac11346c8bc342f4c74e246
+
+[ comp4 ]
+
+ compType = INTEGER:204
+ bootCore = INTEGER:48
+ compOpts = INTEGER:3333
+ destAddr = FORMAT:HEX,OCT:41c80000
+ compSize = INTEGER:2048
+ shaType  = OID:2.16.840.1.101.3.4.2.1
+ shaValue = FORMAT:HEX,OCT:c29027e032432ebc64c9bc4caa5f939ca8e7bfe6b22d3f603bd83af4e89212e8ab4c210c24f25bdae145fc293ce37e5a966706e16ac11346c8bc342f4c74e246
+
+ [ swrv ]
+
+ swrv = INTEGER:3
+
+ [ firewall ]
+
+ fwall0Index = INTEGER:2049
+ fwall0Cfg = FORMAT:HEX,OCT:00001100003300000044000000000000
+
+ [ pll ]
+ pll0Index = INTEGER:4
+ pll0Cfg = FORMAT:HEX,OCT:0000000000000000000000000000000000000000000000000000000000000000
+
+ [ debug ]
+ debugUID = FORMAT:HEX,OCT:0000000000000000000000000000000000000000000000000000000000000000
+ debugType = INTEGER:0x32
+ coreDbgEn = INTEGER:0
+ coreDbgSecEn = INTEGER:0
+
+ [ ext_enc_info ]
+ numComp = INTEGER:2
+ esbl=SEQUENCE:enc1
+ efw=SEQUENCE:enc2
+
+ [ enc1 ]
+
+ compNum  = INTEGER:1
+ iv = FORMAT:HEX,OCT:474bfd801866beecc7ab6d4c61490e1a
+ randString = FORMAT:HEX,OCT:772fc5810fa36f516e595ad8adf19260f47a8461f193892746692fbb932727a1
+ iterationCnt = INTEGER:0
+ salt = FORMAT:HEX,OCT:42ea40851298339c8baa84f29d6b68d0
+
+ [ enc2 ]
+
+ compNum = INTEGER:2
+ iv = FORMAT:HEX,OCT:aaaaaaaaaaaabeecc7ab6d4c61490e1a
+ randString = FORMAT:HEX,OCT:bbbbbbbbbbbbbbbbbe595ad8adf19260f47a8461f193892746692fbb932727a1
+ iterationCnt = INTEGER:2
+ salt = FORMAT:HEX,OCT:ccccccccccccccccccaa84f29d6b68d0
+
+

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import argparse
 import logging
+from tempfile import mkstemp
 from ti.x509.extensions import ExtendedBootInfo, SWRevExtension
 from ti.x509.macros import ROMImageType, ROMCertVersion, ROMBootCoreValue
 from ti.x509.utils.hash_wrapper import hash_binary_into_ImageCompExtension
 from ti.x509.romcert import ROMX509Cert
 from ti.x509.utils.concat import concat_file
 from ti.x509.utils.image import Image
-from tempfile import mkstemp
 
 
 def hex_addr(x):
@@ -257,6 +257,18 @@ parser_sbl_sign_v1 = subparsers.add_parser('sbl-v1', parents=[sbl_pp, common_pp,
 parser_sbl_sign_v1.set_defaults(func=sbl_sign_v1)
 
 args = parser.parse_args()
-logging.getLogger().setLevel(args.log_level)
+
+# All the subcommands have a default log level argument
+# If log_level argument is not set, set log level to DEBUG
+if hasattr(args, "log_level"):
+    logging.getLogger().setLevel(args.log_level)
+else:
+    logging.getLogger().setLevel("DEBUG")
+
 logging.debug(args)
-args.func(args)
+
+# Invoke function corresponding to the invoked sub command
+if hasattr(args, "func"):
+    args.func(args)
+else:
+    parser.print_help()

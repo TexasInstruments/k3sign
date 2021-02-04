@@ -33,6 +33,10 @@ def sbl_sign_v2(args):
     logging.info("Reading SBL from %s", args.sbl.name)
     logging.info("Reading SYSFW from %s", args.sysfw.name)
 
+    if args.sysfw_inner_cert is not None:
+        logging.info("Reading SYSFW inner cerfificate from %s",
+                     args.sysfw_inner_cert.name)
+
     if args.sysfw_data is not None:
         logging.info("Reading SYSFW data section from %s",
                      args.sysfw_data.name)
@@ -53,8 +57,17 @@ def sbl_sign_v2(args):
 
     sysfw_img_comp_ext = sysfw_img.get_image_comp_extension()
 
-    combined_boot_info_ext = ExtendedBootInfo(
-        sbl_img_comp_ext, sysfw_img_comp_ext)
+    combined_boot_info_ext = ExtendedBootInfo(sbl_img_comp_ext, sysfw_img_comp_ext)
+
+    if args.sysfw_inner_cert is not None:
+        sysfw_inner_cert_img = Image(args.sysfw_inner_cert.name)
+        sysfw_inner_cert_img.load_addr = args.sysfw_data_load_addr
+        sysfw_inner_cert_img.compType = ROMImageType.SYSFW_INNER_CERT
+        sysfw_inner_cert_img.bootCore = ROMBootCoreValue.DMSC
+        sysfw_inner_cert_img.cert_label = "sysfw_inner_cert"
+
+        sysfw_inner_cert_img_comp_ext = sysfw_inner_cert_img.get_image_comp_extension()
+        combined_boot_info_ext.append(sysfw_inner_cert_img_comp_ext)
 
     if args.sysfw_data is not None:
         sysfw_data_img = Image(args.sysfw_data.name)
@@ -88,6 +101,9 @@ def sbl_sign_v2(args):
                   keep_intermediate_files=True)
 
     files_to_concat = [cert_fname, args.sbl.name, args.sysfw.name]
+
+    if args.sysfw_inner_cert is not None:
+        files_to_concat.append(args.sysfw_inner_cert.name)
 
     if args.sysfw_data is not None:
         files_to_concat.append(args.sysfw_data.name)
@@ -235,6 +251,7 @@ sysfw_pp.add_argument('--sysfw-signing-key', type=argparse.FileType('rb'))
 sysfw_pp.add_argument('--sysfw-cert-out', type=argparse.FileType('wb'))
 sysfw_pp.add_argument('--sysfw-data', type=argparse.FileType('rb'))
 sysfw_pp.add_argument('--sysfw-data-load-addr', type=hex_addr, default=0x7F000)
+sysfw_pp.add_argument('--sysfw-inner-cert', type=argparse.FileType('rb'))
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)

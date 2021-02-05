@@ -59,15 +59,15 @@ def sbl_sign_v2(args):
 
     combined_boot_info_ext = ExtendedBootInfo(sbl_img_comp_ext, sysfw_img_comp_ext)
 
-    if args.sysfw_inner_cert is not None:
-        sysfw_inner_cert_img = Image(args.sysfw_inner_cert.name)
-        sysfw_inner_cert_img.load_addr = args.sysfw_data_load_addr
-        sysfw_inner_cert_img.compType = ROMImageType.SYSFW_INNER_CERT
-        sysfw_inner_cert_img.bootCore = ROMBootCoreValue.DMSC
-        sysfw_inner_cert_img.cert_label = "sysfw_inner_cert"
+    if args.sysfw_data is not None:
+        sbl_data_img = Image(args.sysfw_data.name)
+        sbl_data_img.load_addr = 0x41c80000
+        sbl_data_img.compType = ROMImageType.SBL_DATA_SECTION
+        sbl_data_img.bootCore = ROMBootCoreValue.MCU
+        sbl_data_img.cert_label = "sbl_data"
 
-        sysfw_inner_cert_img_comp_ext = sysfw_inner_cert_img.get_image_comp_extension()
-        combined_boot_info_ext.append(sysfw_inner_cert_img_comp_ext)
+        sbl_data_img_comp_ext = sbl_data_img.get_image_comp_extension()
+        combined_boot_info_ext.append(sbl_data_img_comp_ext)
 
     if args.sysfw_data is not None:
         sysfw_data_img = Image(args.sysfw_data.name)
@@ -78,6 +78,16 @@ def sbl_sign_v2(args):
 
         sysfw_data_img_comp_ext = sysfw_data_img.get_image_comp_extension()
         combined_boot_info_ext.append(sysfw_data_img_comp_ext)
+
+    if args.sysfw_inner_cert is not None:
+        sysfw_inner_cert_img = Image(args.sysfw_inner_cert.name)
+        sysfw_inner_cert_img.load_addr = 0
+        sysfw_inner_cert_img.compType = ROMImageType.SYSFW_INNER_CERT
+        sysfw_inner_cert_img.bootCore = ROMBootCoreValue.DMSC
+        sysfw_inner_cert_img.cert_label = "sysfw_inner_cert"
+
+        sysfw_inner_cert_img_comp_ext = sysfw_inner_cert_img.get_image_comp_extension()
+        combined_boot_info_ext.append(sysfw_inner_cert_img_comp_ext)
 
     # logging.error(combined_boot_info_ext)
     # logging.error(combined_boot_info_ext.get_toc_entry())
@@ -102,11 +112,14 @@ def sbl_sign_v2(args):
 
     files_to_concat = [cert_fname, args.sbl.name, args.sysfw.name]
 
-    if args.sysfw_inner_cert is not None:
-        files_to_concat.append(args.sysfw_inner_cert.name)
+    if args.sysfw_data is not None:
+        files_to_concat.append(args.sysfw_data.name)
 
     if args.sysfw_data is not None:
         files_to_concat.append(args.sysfw_data.name)
+
+    if args.sysfw_inner_cert is not None:
+        files_to_concat.append(args.sysfw_inner_cert.name)
 
     concat_file(args.output_file.name, files_to_concat)
 

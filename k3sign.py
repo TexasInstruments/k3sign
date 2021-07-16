@@ -221,7 +221,8 @@ sign_group.add_argument('--cert-out', type=argparse.FileType('wb'))
 # Common Options for parser
 common_pp = argparse.ArgumentParser(add_help=False)
 common_pp.add_argument('--device-type')
-common_pp.add_argument('--sw-rev', type=int, default=0)
+# default set to 1, since swrev is programmed to be 1 in efuses
+common_pp.add_argument('--sw-rev', type=int, default=1)
 common_pp.add_argument('--log-level', type=str,
                        default="INFO", choices=["INFO", "DEBUG"])
 common_pp.add_argument('--output-file', type=argparse.FileType('wb'))

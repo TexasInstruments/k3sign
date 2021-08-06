@@ -40,6 +40,10 @@ def sbl_sign_v2(args):
     if args.sysfw_data is not None:
         logging.info("Reading SYSFW data section from %s",
                      args.sysfw_data.name)
+        
+    if args.sbl_data is not None:
+        logging.info("Reading SBL data section from %s",
+                     args.sbl_data.name)
 
     sbl_image = Image(args.sbl.name)
     sbl_image.load_addr = args.sbl_load_addr
@@ -59,9 +63,9 @@ def sbl_sign_v2(args):
 
     combined_boot_info_ext = ExtendedBootInfo(sbl_img_comp_ext, sysfw_img_comp_ext)
 
-    if args.sysfw_data is not None:
-        sbl_data_img = Image(args.sysfw_data.name)
-        sbl_data_img.load_addr = 0x41c80000
+    if args.sbl_data is not None:
+        sbl_data_img = Image(args.sbl_data.name)
+        sbl_data_img.load_addr = args.sbl_data_load_addr
         sbl_data_img.compType = ROMImageType.SBL_DATA_SECTION
         sbl_data_img.bootCore = ROMBootCoreValue.MCU
         sbl_data_img.cert_label = "sbl_data"
@@ -112,8 +116,8 @@ def sbl_sign_v2(args):
 
     files_to_concat = [cert_fname, args.sbl.name, args.sysfw.name]
 
-    if args.sysfw_data is not None:
-        files_to_concat.append(args.sysfw_data.name)
+    if args.sbl_data is not None:
+        files_to_concat.append(args.sbl_data.name)
 
     if args.sysfw_data is not None:
         files_to_concat.append(args.sysfw_data.name)
@@ -263,7 +267,9 @@ sysfw_pp.add_argument('--sysfw-load-addr', type=hex_addr, default=0x40000)
 sysfw_pp.add_argument('--sysfw-signing-key', type=argparse.FileType('rb'))
 sysfw_pp.add_argument('--sysfw-cert-out', type=argparse.FileType('wb'))
 sysfw_pp.add_argument('--sysfw-data', type=argparse.FileType('rb'))
+sysfw_pp.add_argument('--sbl-data', type=argparse.FileType('rb'))
 sysfw_pp.add_argument('--sysfw-data-load-addr', type=hex_addr, default=0x7F000)
+sysfw_pp.add_argument('--sbl-data-load-addr', type=hex_addr, default=0x41c80000)
 sysfw_pp.add_argument('--sysfw-inner-cert', type=argparse.FileType('rb'))
 
 parser = argparse.ArgumentParser(

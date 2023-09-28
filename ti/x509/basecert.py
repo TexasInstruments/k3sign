@@ -3,7 +3,7 @@ import os
 import logging
 import subprocess
 from tempfile import mkstemp
-from ti.x509.macros import SHAType
+from ti.x509.macros import SHAType, SigAlgos
 
 X509_BOILER_PLATE = """\
 [ req ]
@@ -29,7 +29,7 @@ basicConstraints = CA:true"""
 class BaseX509Cert():
 
     def sign(self, output_file, key_file=None, keep_intermediate_files=False,
-             sha_type=SHAType.SHA2_512):
+             sha_type=SHAType.SHA2_512, sig_algo= SigAlgos.RSA_PKCS_SHA512):
         """Sign an X509 Certificate"""
 
         if key_file is None:
@@ -62,6 +62,20 @@ class BaseX509Cert():
             cert_temp_fname,
             "-" + sha_type.openssl_arg
         ]
+
+        # Add additional parameters when PSS signing algorithm is detected
+        # Currently, the PSS related parameters are hardcoded,
+        # we may accept the values through parameters.
+        if sig_algo.algo_str == "rsassapss":
+            signing_args += [
+                    "-sigopt",
+                    "rsa_padding_mode:pss",
+                    "-sigopt",
+                    "rsa_pss_saltlen:64",
+                    "-sigopt",
+                    "rsa_mgf1_md:" + sha_type.openssl_arg,
+            ]
+
         logging.debug("OpenSSL command used is %s", ' '.join(signing_args))
 
         subprocess.run(signing_args, check=True)

@@ -3,7 +3,7 @@ import argparse
 import logging
 from tempfile import mkstemp
 from ti.x509.extensions import ExtendedBootInfo, SWRevExtension
-from ti.x509.macros import ROMImageType, ROMCertVersion, ROMBootCoreValue
+from ti.x509.macros import ROMImageType, ROMCertVersion, ROMBootCoreValue, SigAlgos
 from ti.x509.utils.hash_wrapper import hash_binary_into_ImageCompExtension
 from ti.x509.romcert import ROMX509Cert
 from ti.x509.utils.concat import concat_file
@@ -14,6 +14,18 @@ def hex_addr(x):
     """Simple validator for load addresses"""
     return int(x, 16)
 
+def sig_algo_obj_from_str(alg):
+    """Map signature algo string to python objects"""
+    if alg == "sha512wrsa":
+       return SigAlgos.RSA_PKCS_SHA512
+    elif alg == "sha384wrsa":
+       return SigAlgos.RSA_PKCS_SHA384
+    elif alg == "sha256wrsa":
+       return SigAlgos.RSA_PKCS_SHA256
+    elif alg == "rsassapss":
+       return SigAlgos.RSASSA_PSS
+    else:
+        raise Exception
 
 def sbl_sign_v2(args):
     """Sign SBL in the combined image format
@@ -110,9 +122,10 @@ def sbl_sign_v2(args):
     else:
         cert_fname = args.cert_out.name
 
+    sig_algo = sig_algo_obj_from_str(args.sig_algo)
     rom_cert.sign(cert_fname,
                   key_file=args.signing_key.name,
-                  keep_intermediate_files=True)
+                  keep_intermediate_files=True, sig_algo=sig_algo)
 
     files_to_concat = [cert_fname, args.sbl.name, args.sysfw.name]
 
@@ -259,6 +272,7 @@ common_pp.add_argument('--sw-rev', type=int, default=1)
 common_pp.add_argument('--log-level', type=str,
                        default="INFO", choices=["INFO", "DEBUG"])
 common_pp.add_argument('--output-file', type=argparse.FileType('wb'))
+common_pp.add_argument('--sig-algo', type=str, default="sha512wrsa", choices=["sha512wrsa", "sha384wrsa", "sha256wrsa", "rsassapss", "sha512wecdsa", "sha384wecdsa", "sha256wecdsa"])
 
 # TODO: Add argument to force SBL to combined image format
 sysfw_pp = argparse.ArgumentParser(add_help=False)

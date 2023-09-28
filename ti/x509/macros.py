@@ -65,3 +65,17 @@ class ROMCoreOption(Enum):
     """
     THUMB_MODE = 1
     SPLIT_MODE = 2
+
+class SigAlgos(Enum):
+    """
+    Enums for Signature algorithm.
+
+    """
+    RSA_PKCS_SHA512 = ("1.2.840.113549.1.1.13", "sha512wrsa")
+    RSA_PKCS_SHA384 = ("1.2.840.113549.1.1.12", "sha384wrsa")
+    RSA_PKCS_SHA256 = ("1.2.840.113549.1.1.11", "sha256wrsa")
+    RSASSA_PSS = ("1.2.840.113549.1.1.10", "rsassapss")
+
+    def __init__(self, oid, algo_str):
+        self.oid = oid
+        self.algo_str = algo_str

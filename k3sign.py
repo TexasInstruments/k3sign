@@ -9,6 +9,8 @@ from ti.x509.romcert import ROMX509Cert
 from ti.x509.utils.concat import concat_file
 from ti.x509.utils.image import Image
 
+# Component option value for dual stage boot
+COMP_OPT_FOR_DUAL_STAGE = 160
 
 def hex_addr(x):
     """Simple validator for load addresses"""
@@ -64,6 +66,8 @@ def sbl_sign_v2(args):
     sbl_image.cert_label = "sbl"
 
     sbl_img_comp_ext = sbl_image.get_image_comp_extension()
+    if args.two_stage == True:
+        sbl_img_comp_ext.compOpts = COMP_OPT_FOR_DUAL_STAGE
 
     sysfw_img = Image(args.sysfw.name)
     sysfw_img.load_addr = args.sysfw_load_addr
@@ -273,6 +277,7 @@ common_pp.add_argument('--log-level', type=str,
                        default="INFO", choices=["INFO", "DEBUG"])
 common_pp.add_argument('--output-file', type=argparse.FileType('wb'))
 common_pp.add_argument('--sig-algo', type=str, default="sha512wrsa", choices=["sha512wrsa", "sha384wrsa", "sha256wrsa", "rsassapss", "sha512wecdsa", "sha384wecdsa", "sha256wecdsa"])
+common_pp.add_argument('--two-stage', action='store_true')
 
 # TODO: Add argument to force SBL to combined image format
 sysfw_pp = argparse.ArgumentParser(add_help=False)
